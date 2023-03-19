@@ -2,7 +2,7 @@ class CalorieTracker {
     // this constructor renders each of these every time the app is loaded
     constructor() {
         // private constructor function
-        this._calorieLimit = 2200;
+        this._calorieLimit = Storage.getCalorieLimit();
         this._totalCalories = 0;
         this._meals = [];
         this._workouts = [];
@@ -64,6 +64,7 @@ class CalorieTracker {
 
     setLimit(calorieLimit){
         this._calorieLimit = calorieLimit;
+        Storage.setCalorieLimit(calorieLimit);
         this._displayCaloriesLimit();
         this._render();
     }
@@ -206,9 +207,28 @@ class Workout {
         this.calories = calories;
         // possibly add length?
     }
+};
+
+// Local Storage Class 
+class Storage {
+    static getCalorieLimit(defaultLimit = 2000){
+        let calorieLimit;
+        if(localStorage.getItem('calorieLimit') === null){
+            calorieLimit = defaultLimit;
+        } else {
+            calorieLimit = +localStorage.getItem('calorieLimit');
+        }
+        return calorieLimit;
+    }
+
+    static setCalorieLimit(calorieLimit){
+        localStorage.setItem('calorieLimit', calorieLimit);
+    }
 }
 
-// 
+
+
+// Intializing Class
 class App {
     constructor(){
         // enables to get public methods from the CalorieTracker class
@@ -336,5 +356,7 @@ class App {
     }
   
 }
+
+
 
 const app = new App();
