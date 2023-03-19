@@ -121,16 +121,46 @@ class Workout {
     }
 }
 
-const tracker = new CalorieTracker();
+// 
+class App {
+    constructor(){
+        // enables to get public methods from the CalorieTracker class
+        this._tracker = new CalorieTracker();
 
-const breakfast = new Meal('Breakfast', 400);
-const lunch = new Meal('Lunch', 1350);
-tracker.addMeal(breakfast);
-tracker.addMeal(lunch);
+        // eventlisteners for meal/workout forms
+        document.getElementById('meal-form').addEventListener('submit', this._newItem.bind(this, 'meal'))
+        document.getElementById('workout-form').addEventListener('submit', this._newItem.bind(this, 'workout'))
+    }   
+  // adding a new meal/workout in the form submission
+    _newItem(type, e){
+        e.preventDefault();
+        const name = document.getElementById(`${type}-name`);
+        const calories = document.getElementById(`${type}-calories`);
 
-const run = new Workout('Morning Run', 320);
-tracker.addWorkout(run);
+        // Validate inputs
+        if(name.value === '' || calories.value === '') {
+            alert('Please fill in all fields');
+            return;
+        }
+        if(type === 'meal'){
+            // adding '+' to the beginning of calories turns this into a number 
+            const meal =  new Meal(name.value, +calories.value);
+            this._tracker.addMeal(meal);
+        } else {
+            const workout =  new Workout(name.value, +calories.value);
+            this._tracker.addWorkout(workout);
+        }
+        
+        name.value = '';
+        calories.value = '';
 
-console.log(tracker._meals);
-console.log(tracker._workouts);
-console.log(tracker._totalCalories);
+
+        const collapseItem = document.getElementById(`collapse-${type}`);
+        const bsCollapse = new bootstrap.Collapse(collapseItem, {
+            toggle: true
+        })
+    }
+  
+}
+
+const app = new App();
