@@ -4,7 +4,7 @@ class CalorieTracker {
         // private constructor function
         this._calorieLimit = Storage.getCalorieLimit();
         this._totalCalories = Storage.getTotalCalories(0);
-        this._meals = [];
+        this._meals = Storage.getMeals();
         this._workouts = [];
 
 
@@ -23,6 +23,7 @@ class CalorieTracker {
         this._meals.push(meal);
         this._totalCalories += meal.calories;
         Storage.updateTotalCalories(this._totalCalories);
+        Storage.saveMeal(meal);
         this._displayNewMeal(meal);
         this._render();
     }
@@ -71,6 +72,11 @@ class CalorieTracker {
         Storage.setCalorieLimit(calorieLimit);
         this._displayCaloriesLimit();
         this._render();
+    }
+
+    // displaying the local storage items in the DOM
+    loadItems(){
+        this._meals.forEach(meal => this._displayNewMeal(meal));
     }
     
 
@@ -242,6 +248,22 @@ class Storage {
     static updateTotalCalories(calories) {
         localStorage.setItem('totalCalories', calories)
     }
+
+    static getMeals(){
+        let meals;
+        if(localStorage.getItem('meals') === null){
+            meals = [];
+        } else {
+            meals = JSON.parse(localStorage.getItem('meals'));
+        }
+        return meals;
+    }
+
+    static saveMeal(meal){
+        const meals = Storage.getMeals();
+        meals.push(meal);
+        localStorage.setItem('meals', JSON.stringify(meals))
+    }
 }
 
 
@@ -251,41 +273,47 @@ class App {
     constructor(){
         // enables to get public methods from the CalorieTracker class
         this._tracker = new CalorieTracker();
+        this._loadEventListeners();
+        this._tracker.loadItems();
+    }  
 
-        // eventlisteners for adding meal/workout forms
-        document
-        .getElementById('meal-form')
-        .addEventListener('submit', this._newItem.bind(this, 'meal'));
-        document
-        .getElementById('workout-form')
-        .addEventListener('submit', this._newItem.bind(this, 'workout'));
+    _loadEventListeners(){
+       // eventlisteners for adding meal/workout forms
+       document
+       .getElementById('meal-form')
+       .addEventListener('submit', this._newItem.bind(this, 'meal'));
+       document
+       .getElementById('workout-form')
+       .addEventListener('submit', this._newItem.bind(this, 'workout'));
 
-        // event listener for removing items
-        document
-        .getElementById('meal-items')
-        .addEventListener('click', this._removeItem.bind(this, 'meal'));
-        document
-        .getElementById('workout-items')
-        .addEventListener('click', this._removeItem.bind(this, 'workout'));
+       // event listener for removing items
+       document
+       .getElementById('meal-items')
+       .addEventListener('click', this._removeItem.bind(this, 'meal'));
+       document
+       .getElementById('workout-items')
+       .addEventListener('click', this._removeItem.bind(this, 'workout'));
 
-        // event listeners for filtering out items
-        document
-        .getElementById('filter-meals')
-        .addEventListener('keyup', this._filterItems.bind(this, 'meal'));
-        document
-        .getElementById('filter-workouts')
-        .addEventListener('keyup', this._filterItems.bind(this, 'workout'));
+       // event listeners for filtering out items
+       document
+       .getElementById('filter-meals')
+       .addEventListener('keyup', this._filterItems.bind(this, 'meal'));
+       document
+       .getElementById('filter-workouts')
+       .addEventListener('keyup', this._filterItems.bind(this, 'workout'));
 
-        // event listeners to reset the app 
-        document
-        .getElementById('reset')
-        .addEventListener('click', this._reset.bind(this));
+       // event listeners to reset the app 
+       document
+       .getElementById('reset')
+       .addEventListener('click', this._reset.bind(this));
 
-        // event listener to set calorie limit
-        document
-        .getElementById('limit-form')
-        .addEventListener('submit', this._setLimit.bind(this));
-    }   
+       // event listener to set calorie limit
+       document
+       .getElementById('limit-form')
+       .addEventListener('submit', this._setLimit.bind(this));  
+    }
+
+
   // adding a new meal/workout in the form submission
     _newItem(type, e){
         e.preventDefault();
@@ -372,6 +400,8 @@ class App {
         const modal = bootstrap.Modal.getInstance(modalEl);
         modal.hide()
     }
+
+    
   
 }
 
