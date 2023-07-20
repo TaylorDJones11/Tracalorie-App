@@ -11,10 +11,10 @@
 </p>
 
 ## 📝 Description 
-Tracalorie-App was built using JS OOP and bootstrap. It allows users to track the number of calories they eat and burn each day through workouts. The app features a responsive UI with a progress bar to show user how far they are from reaching their daily calorie goal. The information is stored in local storage but can be reset with the "Reset Day" button.
+Tracalorie-App was built using JS OOP and Bootstrap. It allows users to track the number of calories they eat and burn each day through workouts. The app features a responsive UI with a progress bar to show users how far they are from reaching their daily calorie goal. The information is stored in local storage but can be reset with the "Reset Day" button.
 
 ## 🚀 Features 
- - Displays of calories burned, consumed and remaining
+ - Displays of calories burned, consumed, and remaining
  - Animated progress bar to visually show users their daily progress
  - Users are able to input their meals and amount of calories
  - Filtering through both meals and workouts
